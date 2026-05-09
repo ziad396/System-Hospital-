@@ -61,7 +61,7 @@ class BookConroller extends Controller
 
 public function store(Request $request, $id_doctor)
 {
-    // ✅ Validation
+    //  Validation
     $validated = Validator::make($request->all(), [
         'time' => 'required|date_format:H:i',
         'day'  => 'required|string',
@@ -73,7 +73,7 @@ public function store(Request $request, $id_doctor)
         ], 422);
     }
 
-    // ✅ Check doctor schedule for this day
+    //  Check doctor schedule for this day
     $schedule = Schedule::where('doctor_id', $id_doctor)
         ->where('day', $request->day)
         ->first();
@@ -84,7 +84,7 @@ public function store(Request $request, $id_doctor)
         ], 422);
     }
 
-    // ✅ Convert time using Carbon
+    //  Convert time using Carbon
     $requestTime = Carbon::createFromFormat('H:i', $request->time);
     $startTime   = Carbon::createFromFormat('H:i:s', $schedule->start_time);
     $endTime     = Carbon::createFromFormat('H:i:s', $schedule->end_time);
@@ -95,14 +95,14 @@ if (!in_array($minutes, ['00', '30'])) {
         'message' => 'time must be in 30-minute intervals (e.g. 10:00 or 10:30)',
     ], 422);
 }
-    // ✅ Check time within range
+    //  Check time within range
     if ($requestTime->lt($startTime) || $requestTime->gt($endTime)) {
         return response()->json([
             'message' => 'this time is not available',
         ], 422);
     }
 
-    // ✅ Check if time already booked (بدون loop)
+    //  Check if time already booked (بدون loop)
     $isBooked = Appiontment::where('doctor_id', $id_doctor)
         ->where('day', $request->day)
         ->where('time', $request->time)
@@ -114,7 +114,7 @@ if (!in_array($minutes, ['00', '30'])) {
         ], 422);
     }
 
-    // ✅ Check authenticated user
+    // Check authenticated user
     $user = Auth::user();
     if (!$user) {
         return response()->json([
@@ -122,7 +122,7 @@ if (!in_array($minutes, ['00', '30'])) {
         ], 401);
     }
 
-    // ✅ Create booking
+    //  Create booking
     $book = Appiontment::create([
         'time'      => $request->time,
         'day'       => $request->day,
