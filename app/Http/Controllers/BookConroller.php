@@ -102,7 +102,7 @@ if (!in_array($minutes, ['00', '30'])) {
         ], 422);
     }
 
-    //  Check if time already booked (بدون loop)
+    //  Check if time already booked 
     $isBooked = Appiontment::where('doctor_id', $id_doctor)
         ->where('day', $request->day)
         ->where('time', $request->time)
